@@ -1,0 +1,8 @@
+╔═════════════════════╗
+║ colours             ╟─
+╟───────┬─────────┬───╢
+║ name  │ string  │ R ║
+║ red   │ integer │ R ║
+║ green │ integer │ R ║
+║ blue  │ integer │ R ║
+╚═══════╧═════════╧═══╝
