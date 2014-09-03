@@ -39,11 +39,23 @@ RSpec.describe Colour, type: :model do
   it '#hex=' do
     red.hex = '#123456'
     expect([red.red, red.green, red.blue]).to eq([18, 52, 86])
-  end
-
-  it '#hex=' do
     red.hex = '#AbCdEf'
     expect([red.red, red.green, red.blue]).to eq([171, 205, 239])
+  end
+
+  it '#hsv=' do
+    red.hsv = [  0, 1.0, 1.0]
+    expect(red.hex).to eq('#FF0000')
+    red.hsv = [ 60, 1.0, 0.5]
+    expect(red.hex).to eq('#7F7F00')
+    red.hsv = [120, 1.0, 0.0]
+    expect(red.hex).to eq('#000000')
+    red.hsv = [180, 0.0, 1.0]
+    expect(red.hex).to eq('#FFFFFF')
+    red.hsv = [240, 0.5, 1.0]
+    expect(red.hex).to eq('#7F7FFF')
+    red.hsv = [300, 0.5, 0.5]
+    expect(red.hex).to eq('#7F3F7F')
   end
 
   it '#hue' do
