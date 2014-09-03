@@ -7,38 +7,68 @@ class Colour < ActiveRecord::Base
   end
 
   def hex=(hex)
-    raise 'Invalid hex colour' unless hex =~ /^#[\dA-F]{6}$/i
+    raise ArgumentError, 'invalid hex colour' unless hex =~ /^#[\dA-F]{6}$/i
     self.red, self.green, self.blue = hex.scan(/[\dA-F]{2}/i).map { |c| c.to_i(16) }
   end
 
   def hsv=(hsv)
+    raise ArgumentError, 'hsv array must have three elements' if hsv.count != 3
     h, s, v = hsv
+    raise ArgumentError, 'hue must be in 0...360' unless (0...360) === h
+    raise ArgumentError, 'saturation must be in 0.0..1.0' unless (0.0..1.0) === s
+    raise ArgumentError, 'value must be in 0.0..1.0' unless (0.0..1.0) === v
     c = s * v
 
-    self.red = 255 * (case h
+    self.red = (255 * (case h
       when   0... 60, 300...360 then c
       when  60...120 then c * (2 - h / 60.0)
       when 120...240 then 0
       when 240...300 then c * (h / 60.0 - 4)
-      end + v - c)
+    end + v - c)).ceil
 
-    self.green = 255 * (case h
+    self.green = (255 * (case h
       when   0... 60 then c * (h / 60.0)
       when  60...180 then c
       when 180...240 then c * (4 - h / 60.0)
       when 240...360 then 0
-      end + v - c)
+    end + v - c)).ceil
 
-    self.blue = 255 * (case h
+    self.blue = (255 * (case h
       when   0...120 then 0
       when 120...180 then c * (h / 60.0 - 2)
       when 180...300 then c
       when 300...360 then c * (6 - h / 60.0)
-      end + v - c)
+    end + v - c)).ceil
   end
 
   def hsl=(hsl)
-    h, s, lightness = hsl
+    raise ArgumentError, 'hsl array must have three elements' if hsl.count != 3
+    h, s, l = hsl
+    raise ArgumentError, 'hue must be in 0...360' unless (0...360) === h
+    raise ArgumentError, 'saturation must be in 0.0..1.0' unless (0.0..1.0) === s
+    raise ArgumentError, 'lightness must be in 0.0..1.0' unless (0.0..1.0) === l
+    c = s * (1 - (2.0 * l - 1).abs)
+
+    self.red = (255 * (case h
+      when   0... 60, 300...360 then c
+      when  60...120 then c * (2 - h / 60.0)
+      when 120...240 then 0
+      when 240...300 then c * (h / 60.0 - 4)
+    end + l - c / 2)).ceil
+
+    self.green = (255 * (case h
+      when   0... 60 then c * (h / 60.0)
+      when  60...180 then c
+      when 180...240 then c * (4 - h / 60.0)
+      when 240...360 then 0
+    end + l - c / 2)).ceil
+
+    self.blue = (255 * (case h
+      when   0...120 then 0
+      when 120...180 then c * (h / 60.0 - 2)
+      when 180...300 then c
+      when 300...360 then c * (6 - h / 60.0)
+    end + l - c / 2)).ceil
   end
 
   # The hue of the colour (0-359).
@@ -80,7 +110,8 @@ class Colour < ActiveRecord::Base
   end
 
   # A combination of saturation and value. Greyscales are all 0, but as saturated colours get darker, the chroma also
-  # gets lower. Green and cyan are both 1; aqua is 0.5.
+  # gets lower. Green and cyan are both 1; aqua is 0.5. Another way to express chroma is saturation * value, but since
+  # we are rounding those values, small inaccuracies may creep in from calculating it that way.
   def chroma
     normalize(parts.max - parts.min).round(2)
   end

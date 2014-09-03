@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Colour, type: :model do
+  let(   :neu) { Colour.new }
   let(   :red) { Colour.find_by_name(   'Red') }
   let(  :blue) { Colour.find_by_name(  'Blue') }
   let(  :grey) { Colour.find_by_name(  'Grey') }
@@ -28,34 +29,66 @@ RSpec.describe Colour, type: :model do
   end
 
   it '#hex=(invalid)' do
-    expect { red.hex = '' }.to raise_error('Invalid hex colour')
-    expect { red.hex = '#AAA' }.to raise_error('Invalid hex colour')
-    expect { red.hex = '#GGGGGG' }.to raise_error('Invalid hex colour')
-    expect { red.hex = '#AAAAAAA' }.to raise_error('Invalid hex colour')
-    expect { red.hex = 'AAAAAA' }.to raise_error('Invalid hex colour')
-    expect(red.hex).to eq('#FF0000')
+    neu.hex = '#FF0000'
+    expect { neu.hex = '' }.to raise_error(ArgumentError, 'invalid hex colour')
+    expect { neu.hex = '#AAA' }.to raise_error(ArgumentError, 'invalid hex colour')
+    expect { neu.hex = '#GGGGGG' }.to raise_error(ArgumentError, 'invalid hex colour')
+    expect { neu.hex = '#AAAAAAA' }.to raise_error(ArgumentError, 'invalid hex colour')
+    expect { neu.hex = 'AAAAAA' }.to raise_error(ArgumentError, 'invalid hex colour')
+    expect(neu.hex).to eq('#FF0000')
   end
 
   it '#hex=' do
-    red.hex = '#123456'
-    expect([red.red, red.green, red.blue]).to eq([18, 52, 86])
-    red.hex = '#AbCdEf'
-    expect([red.red, red.green, red.blue]).to eq([171, 205, 239])
+    neu.hex = '#123456'
+    expect([neu.red, neu.green, neu.blue]).to eq([18, 52, 86])
+    neu.hex = '#AbCdEf'
+    expect([neu.red, neu.green, neu.blue]).to eq([171, 205, 239])
+  end
+
+  it '#hsv=(invalid)' do
+    expect { neu.hsv = [] }.to raise_error(ArgumentError, 'hsv array must have three elements')
+    expect { neu.hsv = ['a', 'a', 'a'] }.to raise_error(ArgumentError, 'hue must be in 0...360')
+    expect { neu.hsv = [360, 0.0, 0.0] }.to raise_error(ArgumentError, 'hue must be in 0...360')
+    expect { neu.hsv = [  0, 1.1, 0.0] }.to raise_error(ArgumentError, 'saturation must be in 0.0..1.0')
+    expect { neu.hsv = [  0, 0.0, 1.1] }.to raise_error(ArgumentError, 'value must be in 0.0..1.0')
   end
 
   it '#hsv=' do
-    red.hsv = [  0, 1.0, 1.0]
-    expect(red.hex).to eq('#FF0000')
-    red.hsv = [ 60, 1.0, 0.5]
-    expect(red.hex).to eq('#7F7F00')
-    red.hsv = [120, 1.0, 0.0]
-    expect(red.hex).to eq('#000000')
-    red.hsv = [180, 0.0, 1.0]
-    expect(red.hex).to eq('#FFFFFF')
-    red.hsv = [240, 0.5, 1.0]
-    expect(red.hex).to eq('#7F7FFF')
-    red.hsv = [300, 0.5, 0.5]
-    expect(red.hex).to eq('#7F3F7F')
+    neu.hsv = [  0, 1.0, 1.0]
+    expect(neu.hex).to eq('#FF0000')
+    neu.hsv = [ 60, 1.0, 0.5]
+    expect(neu.hex).to eq('#808000')
+    neu.hsv = [120, 1.0, 0.0]
+    expect(neu.hex).to eq('#000000')
+    neu.hsv = [180, 0.0, 1.0]
+    expect(neu.hex).to eq('#FFFFFF')
+    neu.hsv = [240, 0.5, 1.0]
+    expect(neu.hex).to eq('#8080FF')
+    neu.hsv = [300, 0.5, 0.5]
+    expect(neu.hex).to eq('#804080')
+  end
+
+  it '#hsl=(invalid)' do
+    expect { neu.hsl = [] }.to raise_error(ArgumentError, 'hsl array must have three elements')
+    expect { neu.hsl = ['a', 'a', 'a'] }.to raise_error(ArgumentError, 'hue must be in 0...360')
+    expect { neu.hsl = [360, 0.0, 0.0] }.to raise_error(ArgumentError, 'hue must be in 0...360')
+    expect { neu.hsl = [  0, 1.1, 0.0] }.to raise_error(ArgumentError, 'saturation must be in 0.0..1.0')
+    expect { neu.hsl = [  0, 0.0, 1.1] }.to raise_error(ArgumentError, 'lightness must be in 0.0..1.0')
+  end
+
+  it '#hsl=' do
+    neu.hsl = [  0, 1.0, 1.0]
+    expect(neu.hex).to eq('#FFFFFF')
+    neu.hsl = [ 60, 1.0, 0.5]
+    expect(neu.hex).to eq('#FFFF00')
+    neu.hsl = [120, 1.0, 0.0]
+    expect(neu.hex).to eq('#000000')
+    neu.hsl = [180, 0.0, 1.0]
+    expect(neu.hex).to eq('#FFFFFF')
+    neu.hsl = [240, 0.5, 1.0]
+    expect(neu.hex).to eq('#FFFFFF')
+    neu.hsl = [300, 0.5, 0.5]
+    expect(neu.hex).to eq('#C040C0')
   end
 
   it '#hue' do
