@@ -14,10 +14,10 @@
 ActiveRecord::Schema.define(version: 20140903022936) do
 
   create_table "colours", force: true do |t|
-    t.string   "name",       null: false
-    t.integer  "red",        null: false
-    t.integer  "green",      null: false
-    t.integer  "blue",       null: false
+    t.string   "name"
+    t.integer  "red",        default: 0, null: false
+    t.integer  "green",      default: 0, null: false
+    t.integer  "blue",       default: 0, null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
