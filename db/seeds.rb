@@ -1,3 +1,5 @@
+require 'text_progress_bar'
+
 [
   ['AliceBlue',            240, 248, 255],
   ['AntiqueWhite',         250, 235, 215],
@@ -144,7 +146,6 @@
   ['WhiteSmoke',           245, 245, 245],
   ['Yellow',               255, 255,   0],
   ['YellowGreen',          154, 205,  50],
-].each do |n, r, g, b|
-  Colour.where(name: n).first_or_create(red: r, green: g, blue: b) and print '.'
+].track do |n, r, g, b|
+  Colour.where(name: n).first_or_create(red: r, green: g, blue: b)
 end
-puts
