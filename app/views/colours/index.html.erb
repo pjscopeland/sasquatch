@@ -1,0 +1,73 @@
+<h1>Listing colours</h1>
+
+<table>
+  <tr class="inputs">
+    <th><input name="name"></th>
+    <th><input name="hex"></th>
+    <th><input name="red"></th>
+    <th><input name="green"></th>
+    <th><input name="blue"></th>
+    <th></th>
+    <th></th>
+    <th><input name="hue"></th>
+    <th><input name="saturation"></th>
+    <th><input name="value"></th>
+    <th><input name="lightness"></th>
+    <th><input name="intensity"></th>
+    <th><input name="luma"></th>
+    <th><input name="chroma"></th>
+  </tr>
+</table>
+<table>
+  <thead>
+    <tr>
+      <th class="name">Name</th>
+      <th class="hex">Hex</th>
+      <th class="red" title="Red">R</th>
+      <th class="green" title="Green">G</th>
+      <th class="blue" title="Blue">B</th>
+      <th class="rgb_distance" title="RGB Distance">?</th>
+      <th class="rgb_rank" title="RGB Rank">?</th>
+      <th class="hue" title="Hue">H</th>
+      <th class="saturation" title="Saturation">S</th>
+      <th class="value" title="Value">V</th>
+      <th class="lightness" title="Lightness">L</th>
+      <th class="intensity" title="Intensity">I</th>
+      <th class="luma" title="Luma">&lambda;</th>
+      <th class="chroma" title="Chroma">C</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @colours.each do |colour| %>
+      <tr class="<%= colour.name.underscore %>">
+        <td class="name" style="<%= colour_style(colour) %>"><%= colour.name %></td>
+        <td class="hex"><code><%= colour.hex %></code></td>
+        <td class="numeric red" style="<%= colour_style(red: colour.red) %>"><%= colour.red %></td>
+        <td class="numeric green" style="<%= colour_style(green: colour.green) %>"><%= colour.green %></td>
+        <td class="numeric blue" style="<%= colour_style(blue: colour.blue) %>"><%= colour.blue %></td>
+        <td class="numeric rgb_distance">0</td>
+        <td class="numeric rgb_rank">0</td>
+        <td class="numeric hue" style="<%= colour_style(hsv: [colour.hue, 1, 1]) %>"><%= colour.hue %></td>
+        <td class="numeric saturation" style="<%= colour_style(hsl: [0, colour.saturation, 0.5]) %>">
+          <%= number_with_precision(colour.saturation, precision: 2) %>
+        </td>
+        <td class="numeric value" style="<%= colour_style(hsv: [0, 0, colour.value]) %>">
+          <%= number_with_precision(colour.value, precision: 2) %>
+        </td>
+        <td class="numeric lightness" style="<%= colour_style(hsv: [0, 0, colour.lightness]) %>">
+          <%= number_with_precision(colour.lightness, precision: 2) %>
+        </td>
+        <td class="numeric intensity" style="<%= colour_style(hsv: [0, 0, colour.intensity]) %>">
+          <%= number_with_precision(colour.intensity, precision: 2) %>
+        </td>
+        <td class="numeric luma" style="<%= colour_style(hsv: [0, 0, colour.luma]) %>">
+          <%= number_with_precision(colour.luma, precision: 2) %>
+        </td>
+        <td class="numeric chroma" style="<%= colour_style(hsv: [0, colour.chroma, colour.chroma]) %>">
+          <%= number_with_precision(colour.chroma, precision: 2) %>
+        </td>
+      </tr>
+   <% end %>
+  </tbody>
+</table>
